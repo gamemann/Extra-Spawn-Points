@@ -64,6 +64,7 @@ public void OnPluginStart()
 	
 	// Commands
 	RegAdminCmd("sm_addspawns", Command_AddSpawns, ADMFLAG_ROOT);
+	RegAdminCmd("sm_getspawncount", Command_GetSpawnCount, ADMFLAG_SLAY);
 	
 	// Automatically Execute Config
 	AutoExecConfig(true, "sm_ExtraSpawnPoints");
@@ -81,6 +82,16 @@ public Action Command_AddSpawns(int iClient, int iArgs)
 	{
 		PrintToChat(iClient, "\x02[ESP] \x03Added map spawns!");
 	}
+	
+	return Plugin_Handled;
+}
+
+public Action Command_GetSpawnCount(int iClient, int iArgs)
+{
+	int idTSpawns = getTeamCount(2);
+	int idCTSpawns = getTeamCount(3);
+	
+	ReplyToClient(iClient, "[ESP]There are now %d CT spawns and %d T spawns", idCTSpawns, idTSpawns);
 	
 	return Plugin_Handled;
 }
@@ -130,16 +141,13 @@ stock void AddMapSpawns()
 	int iTSpawns = 0;
 	int iCTSpawns = 0;
 	
-	int idTSpawns = 0;
-	int idCTSpawns = 0;
-	
 	float fVecCt[3];
 	float fVecT[3];
 	float angVec[3];
 	
 	char sClassName[64];
 	
-	for (int i = MaxClients; i < MAXENTITIES; i++)
+	for (int i = MaxClients; i <= MAXENTITIES; i++)
 	{
 		if (!IsValidEdict(i) || !IsValidEntity(i))
 		{
@@ -222,25 +230,35 @@ stock void AddMapSpawns()
 	
 	if (g_bcvarDebug) 
 	{
-		for (int i = MaxClients; i < MAXENTITIES; i++)
-		{
-			if (!IsValidEdict(i) || !IsValidEntity(i))
-			{
-				continue;
-			}
-			
-			GetEdictClassname(i, sClassName, sizeof(sClassName));
-			
-			if (StrEqual(sClassName, "info_player_terrorist"))
-			{
-				idTSpawns++;
-			}
-			else if (StrEqual(sClassName, "info_player_counterterrorist"))
-			{
-				idCTSpawns++;
-			}
-		}
+		int idTSpawns = getTeamCount(2);
+		int idCTSpawns = getTeamCount(3);
 		
 		LogMessage("[ESP]There are now %d CT spawns and %d T spawns", idCTSpawns, idTSpawns);
 	}
+}
+
+stock int getTeamCount(int iTeam)
+{
+	int iAmount = 0;
+	
+	for (int i = MaxClients; i <= MAXENTITIES; i++)
+	{
+		if (!IsValidEdict(i) || !IsValidEntity(i))
+		{
+			continue;
+		}
+		
+		GetEdictClassname(i, sClassName, sizeof(sClassName));
+		
+		if (StrEqual(sClassName, "info_player_counterterrorist") && iTeam == 3)
+		{
+			iAmount++;
+		}
+		else if (StrEqual(sClassName, "info_player_terrorist") && iTeam == 2)
+		{
+			iAmount++;
+		}
+	}
+	
+	return iAmount;
 }
