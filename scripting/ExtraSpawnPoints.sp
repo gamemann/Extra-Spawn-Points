@@ -182,7 +182,7 @@ stock void AddMapSpawns()
 	{
 		if (g_icvarTeams == 1 || g_icvarTeams == 3) 
 		{
-			for(int i = iCTSpawns; i < g_icvarCTSpawns; i++)
+			for(int i = iCTSpawns; i <= g_icvarCTSpawns; i++)
 			{
 				int iEnt = CreateEntityByName("info_player_counterterrorist");
 				
@@ -203,7 +203,7 @@ stock void AddMapSpawns()
 	{
 		if (g_icvarTeams == 1 || g_icvarTeams == 2) 
 		{
-			for(int i = iTSpawns; i < g_icvarTSpawns; i++)
+			for(int i = iTSpawns; i <= g_icvarTSpawns; i++)
 			{
 				int iEnt = CreateEntityByName("info_player_terrorist");
 				
