@@ -148,7 +148,7 @@ stock void AddMapSpawns()
 	float fVecT[3];
 	float angVec[3];
 	
-	char sClassName[64];
+	char sClassName[MAX_NAME_LENGTH];
 	
 	for (int i = MaxClients; i <= MAXENTITIES; i++)
 	{
