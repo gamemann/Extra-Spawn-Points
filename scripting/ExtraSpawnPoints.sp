@@ -141,6 +141,9 @@ stock void AddMapSpawns()
 	int iTSpawns = 0;
 	int iCTSpawns = 0;
 	
+	int iToSpawnT = g_icvarTSpawns;
+	int iToSpawnCT = g_icvarCTSpawns;
+	
 	float fVecCt[3];
 	float fVecT[3];
 	float angVec[3];
@@ -177,20 +180,20 @@ stock void AddMapSpawns()
 	{
 		if (iCTSpawns == 0 && iTSpawns > 0) 
 		{
-			g_icvarTSpawns *= 2;
+			iToSpawnT *= 2;
 		}
 		
 		if (iTSpawns == 0 && iCTSpawns > 0) 
 		{
-			g_icvarCTSpawns *= 2;
+			iToSpawnCT *= 2;
 		}
 	}
 	
-	if(iCTSpawns && iCTSpawns < g_icvarCTSpawns && iCTSpawns > 0)
+	if(iCTSpawns && iCTSpawns < iToSpawnCT && iCTSpawns > 0)
 	{
 		if (g_icvarTeams == 1 || g_icvarTeams == 3) 
 		{
-			for(int i = iCTSpawns; i <= g_icvarCTSpawns; i++)
+			for(int i = iCTSpawns; i <= iToSpawnCT; i++)
 			{
 				int iEnt = CreateEntityByName("info_player_counterterrorist");
 				
@@ -207,11 +210,11 @@ stock void AddMapSpawns()
 		}
 	}
 	
-	if(iTSpawns && iTSpawns < g_icvarTSpawns && iTSpawns > 0)
+	if(iTSpawns && iTSpawns < iToSpawnT && iTSpawns > 0)
 	{
 		if (g_icvarTeams == 1 || g_icvarTeams == 2) 
 		{
-			for(int i = iTSpawns; i <= g_icvarTSpawns; i++)
+			for(int i = iTSpawns; i <= iToSpawnT; i++)
 			{
 				int iEnt = CreateEntityByName("info_player_terrorist");
 				
