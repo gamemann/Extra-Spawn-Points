@@ -67,7 +67,7 @@ public void OnPluginStart()
 	RegAdminCmd("sm_getspawncount", Command_GetSpawnCount, ADMFLAG_SLAY);
 	
 	// Automatically Execute Config
-	AutoExecConfig(true, "sm_ExtraSpawnPoints");
+	AutoExecConfig(true, "plugin.ESP");
 }
 
 public Action Command_AddSpawns(int iClient, int iArgs) 
