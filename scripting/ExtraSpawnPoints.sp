@@ -251,6 +251,7 @@ stock int getTeamCount(int iTeam)
 			continue;
 		}
 		
+		char sClassName[MAX_NAME_LENGTH];
 		GetEdictClassname(i, sClassName, sizeof(sClassName));
 		
 		if (StrEqual(sClassName, "info_player_counterterrorist") && iTeam == 3)
