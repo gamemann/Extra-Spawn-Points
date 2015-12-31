@@ -1,10 +1,11 @@
 #include <sourcemod>
 #include <sdktools>
-#define PL_VERSION "1.3"
 
-public Plugin:myinfo =
+#define PL_VERSION "1.0"
+
+public Plugin myinfo =
 {
-	name        = "[CS] Extra Spawn Points [ESP]",
+	name        = "Extra Spawn Points (stable)",
 	author      = "Roy (Christian Deacon)",
 	description = "Enforces a minimum amount of spawns for each team.",
 	version     = PL_VERSION,
@@ -12,28 +13,28 @@ public Plugin:myinfo =
 };
 
 // ConVars
-new Handle:g_hTSpawns = INVALID_HANDLE;
-new Handle:g_hCTSpawns = INVALID_HANDLE;
-new Handle:g_hTeams = INVALID_HANDLE;
-new Handle:g_hCourse = INVALID_HANDLE;
-new Handle:g_hDebug = INVALID_HANDLE;
-new Handle:g_hAuto = INVALID_HANDLE;
-new Handle:g_hMapStartDelay = INVALID_HANDLE;
+Handle g_hTSpawns = INVALID_HANDLE;
+Handle g_hCTSpawns = INVALID_HANDLE;
+Handle g_hTeams = INVALID_HANDLE;
+Handle g_hCourse = INVALID_HANDLE;
+Handle g_hDebug = INVALID_HANDLE;
+Handle g_hAuto = INVALID_HANDLE;
+Handle g_hMapStartDelay = INVALID_HANDLE;
 
 
 // ConVar Values
-new g_icvarTSpawns;
-new g_icvarCTSpawns;
-new g_icvarTeams;
-new bool:g_bcvarCourse;
-new bool:g_bcvarDebug;
-new bool:g_bcvarAuto;
-new Float:g_fcvarMapStartDelay;
+int g_icvarTSpawns;
+int g_icvarCTSpawns;
+int g_icvarTeams;
+bool g_bcvarCourse;
+bool g_bcvarDebug;
+bool g_bcvarAuto;
+float g_fcvarMapStartDelay;
 
 // Other
-new bool:g_bMapStart;
+bool g_bMapStart;
 
-public OnPluginStart()
+public void OnPluginStart()
 {
 	// ConVars
 	g_hTSpawns = CreateConVar("sm_ESP_spawns_t", "32", "Amount of spawn points to enforce on the T team.");
@@ -67,7 +68,7 @@ public OnPluginStart()
 	AutoExecConfig(true, "sm_ExtraSpawnPoints");
 }
 
-public Action:Command_AddSpawns(iClient, sArgs) 
+public Action Command_AddSpawns(int iClient, int iArgs) 
 {
 	AddMapSpawns();
 	
@@ -83,12 +84,12 @@ public Action:Command_AddSpawns(iClient, sArgs)
 	return Plugin_Handled;
 }
 
-public CVarChanged(Handle:hCVar, const String:sOldV[], const String:sNewV[])
+public void CVarChanged(Handle hCVar, const char[] sOldV, const char[] sNewV)
 {
 	OnConfigsExecuted();
 }
 
-public OnConfigsExecuted() 
+public void OnConfigsExecuted() 
 {
 	GetValues();
 	
@@ -107,12 +108,12 @@ public OnConfigsExecuted()
 	}
 }
 
-public Action:timer_DelayAddSpawnPoints(Handle:hTimer) 
+public Action timer_DelayAddSpawnPoints(Handle hTimer) 
 {
 	AddMapSpawns();
 }
 
-stock GetValues() 
+stock void GetValues() 
 {
 	g_icvarTSpawns = GetConVarInt(g_hTSpawns);
 	g_icvarCTSpawns = GetConVarInt(g_hCTSpawns);
@@ -123,20 +124,21 @@ stock GetValues()
 	g_fcvarMapStartDelay = GetConVarFloat(g_hMapStartDelay);
 }
 
-stock AddMapSpawns() 
+stock void AddMapSpawns() 
 {
-	new iTSpawns = 0;
-	new iCTSpawns = 0;
+	int iTSpawns = 0;
+	int iCTSpawns = 0;
 	
-	new idTSpawns = 0;
-	new idCTSpawns = 0;
+	int idTSpawns = 0;
+	int idCTSpawns = 0;
 	
-	new Float:fVecCt[3];
-	new Float:fVecT[3];
-	new Float:angVec[3];
-	decl String:sClassName[64];
+	float fVecCt[3];
+	float fVecT[3];
+	float angVec[3];
 	
-	for (new i = MaxClients; i < GetMaxEntities(); i++)
+	char sClassName[64];
+	
+	for (int i = MaxClients; i < GetMaxEntities(); i++)
 	{
 		if (IsValidEdict(i) && IsValidEntity(i) && GetEdictClassname(i, sClassName, sizeof(sClassName)))
 		{
@@ -175,12 +177,13 @@ stock AddMapSpawns()
 	{
 		if (g_icvarTeams == 1 || g_icvarTeams == 3) 
 		{
-			for(new i = iCTSpawns; i < g_icvarCTSpawns; i++)
+			for(int i = iCTSpawns; i < g_icvarCTSpawns; i++)
 			{
-				new iEnt = CreateEntityByName("info_player_counterterrorist");
+				int iEnt = CreateEntityByName("info_player_counterterrorist");
 				if (DispatchSpawn(iEnt))
 				{
 					TeleportEntity(iEnt, fVecCt, angVec, NULL_VECTOR);
+					
 					if (g_bcvarDebug) 
 					{
 						LogMessage("[ESP]+1 CT spawn added!");
@@ -194,12 +197,13 @@ stock AddMapSpawns()
 	{
 		if (g_icvarTeams == 1 || g_icvarTeams == 2) 
 		{
-			for(new i = iTSpawns; i < g_icvarTSpawns; i++)
+			for(int i = iTSpawns; i < g_icvarTSpawns; i++)
 			{
-				new iEnt = CreateEntityByName("info_player_terrorist");
+				int iEnt = CreateEntityByName("info_player_terrorist");
 				if (DispatchSpawn(iEnt))
 				{
 					TeleportEntity(iEnt, fVecT, angVec, NULL_VECTOR);
+					
 					if (g_bcvarDebug) 
 					{
 						LogMessage("[ESP]+1 T spawn added!");
@@ -208,9 +212,10 @@ stock AddMapSpawns()
 			}
 		}
 	}
+	
 	if (g_bcvarDebug) 
 	{
-		for (new i = MaxClients; i < GetMaxEntities(); i++)
+		for (int i = MaxClients; i < GetMaxEntities(); i++)
 		{
 			if (IsValidEdict(i) && IsValidEntity(i) && GetEdictClassname(i, sClassName, sizeof(sClassName)))
 			{
@@ -224,6 +229,7 @@ stock AddMapSpawns()
 				}
 			}
 		}
+		
 		LogMessage("[ESP]There are now %d CT spawns and %d T spawns", idCTSpawns, idTSpawns);
 	}
 }
