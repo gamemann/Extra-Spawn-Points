@@ -2,6 +2,7 @@
 #include <sdktools>
 
 #define PL_VERSION "1.0"
+#define MAXENTITIES 2048
 
 public Plugin myinfo =
 {
@@ -138,20 +139,24 @@ stock void AddMapSpawns()
 	
 	char sClassName[64];
 	
-	for (int i = MaxClients; i < GetMaxEntities(); i++)
+	for (int i = MaxClients; i < MAXENTITIES; i++)
 	{
-		if (IsValidEdict(i) && IsValidEntity(i) && GetEdictClassname(i, sClassName, sizeof(sClassName)))
+		if (!IsValidEdict(i) || !IsValidEntity(i))
 		{
-			if (StrEqual(sClassName, "info_player_terrorist"))
-			{
-				iTSpawns++;
-				GetEntPropVector(i, Prop_Data, "m_vecOrigin", fVecT);
-			}
-			else if (StrEqual(sClassName, "info_player_counterterrorist"))
-			{
-				iCTSpawns++;
-				GetEntPropVector(i, Prop_Data, "m_vecOrigin", fVecCt);
-			}
+			continue;
+		}
+		
+		GetEdictClassname(i, sClassName, sizeof(sClassName));
+		
+		if (StrEqual(sClassName, "info_player_terrorist"))
+		{
+			iTSpawns++;
+			GetEntPropVector(i, Prop_Data, "m_vecOrigin", fVecT);
+		}
+		else if (StrEqual(sClassName, "info_player_counterterrorist"))
+		{
+			iCTSpawns++;
+			GetEntPropVector(i, Prop_Data, "m_vecOrigin", fVecCt);
 		}
 	}
 	
@@ -180,6 +185,7 @@ stock void AddMapSpawns()
 			for(int i = iCTSpawns; i < g_icvarCTSpawns; i++)
 			{
 				int iEnt = CreateEntityByName("info_player_counterterrorist");
+				
 				if (DispatchSpawn(iEnt))
 				{
 					TeleportEntity(iEnt, fVecCt, angVec, NULL_VECTOR);
@@ -200,6 +206,7 @@ stock void AddMapSpawns()
 			for(int i = iTSpawns; i < g_icvarTSpawns; i++)
 			{
 				int iEnt = CreateEntityByName("info_player_terrorist");
+				
 				if (DispatchSpawn(iEnt))
 				{
 					TeleportEntity(iEnt, fVecT, angVec, NULL_VECTOR);
@@ -215,18 +222,22 @@ stock void AddMapSpawns()
 	
 	if (g_bcvarDebug) 
 	{
-		for (int i = MaxClients; i < GetMaxEntities(); i++)
+		for (int i = MaxClients; i < MAXENTITIES; i++)
 		{
-			if (IsValidEdict(i) && IsValidEntity(i) && GetEdictClassname(i, sClassName, sizeof(sClassName)))
+			if (!IsValidEdict(i) || !IsValidEntity(i))
 			{
-				if (StrEqual(sClassName, "info_player_terrorist"))
-				{
-					idTSpawns++;
-				}
-				else if (StrEqual(sClassName, "info_player_counterterrorist"))
-				{
-					idCTSpawns++;
-				}
+				continue;
+			}
+			
+			GetEdictClassname(i, sClassName, sizeof(sClassName));
+			
+			if (StrEqual(sClassName, "info_player_terrorist"))
+			{
+				idTSpawns++;
+			}
+			else if (StrEqual(sClassName, "info_player_counterterrorist"))
+			{
+				idCTSpawns++;
 			}
 		}
 		
