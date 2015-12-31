@@ -171,11 +171,6 @@ stock void AddMapSpawns()
 		}
 	}
 	
-	if (g_bcvarDebug) 
-	{
-		LogMessage("[ESP]There are %d/%d CT points and %d/%d T points", iCTSpawns, g_icvarCTSpawns, iTSpawns, g_icvarTSpawns);
-	}
-	
 	if (g_bcvarCourse) 
 	{
 		if (iCTSpawns == 0 && iTSpawns > 0) 
@@ -187,6 +182,11 @@ stock void AddMapSpawns()
 		{
 			iToSpawnCT *= 2;
 		}
+	}
+	
+	if (g_bcvarDebug) 
+	{
+		LogMessage("[ESP]There are %d/%d CT points and %d/%d T points", iCTSpawns, iToSpawnCT, iTSpawns, iToSpawnT);
 	}
 	
 	if(iCTSpawns && iCTSpawns < iToSpawnCT && iCTSpawns > 0)
