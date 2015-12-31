@@ -91,7 +91,7 @@ public Action Command_GetSpawnCount(int iClient, int iArgs)
 	int idTSpawns = getTeamCount(2);
 	int idCTSpawns = getTeamCount(3);
 	
-	ReplyToClient(iClient, "[ESP]There are now %d CT spawns and %d T spawns", idCTSpawns, idTSpawns);
+	ReplyToCommand(iClient, "[ESP]There are now %d CT spawns and %d T spawns", idCTSpawns, idTSpawns);
 	
 	return Plugin_Handled;
 }
