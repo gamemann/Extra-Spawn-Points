@@ -1,7 +1,7 @@
 #include <sourcemod>
 #include <sdktools>
 
-#define PL_VERSION "1.0"
+#define PL_VERSION "1.1"
 
 public Plugin myinfo =
 {
