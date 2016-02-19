@@ -2,7 +2,6 @@
 #include <sdktools>
 
 #define PL_VERSION "1.0"
-#define MAXENTITIES 2048
 
 public Plugin myinfo =
 {
@@ -13,7 +12,7 @@ public Plugin myinfo =
 	url         = "GFLClan.com & AlliedMods.net & TheDevelopingCommunity.com"
 };
 
-// ConVars
+/* ConVars */
 Handle g_hTSpawns = INVALID_HANDLE;
 Handle g_hCTSpawns = INVALID_HANDLE;
 Handle g_hTeams = INVALID_HANDLE;
@@ -22,8 +21,7 @@ Handle g_hDebug = INVALID_HANDLE;
 Handle g_hAuto = INVALID_HANDLE;
 Handle g_hMapStartDelay = INVALID_HANDLE;
 
-
-// ConVar Values
+/* ConVar Values */
 int g_icvarTSpawns;
 int g_icvarCTSpawns;
 int g_icvarTeams;
@@ -32,12 +30,12 @@ bool g_bcvarDebug;
 bool g_bcvarAuto;
 float g_fcvarMapStartDelay;
 
-// Other
+/* Other */
 bool g_bMapStart;
 
 public void OnPluginStart()
 {
-	// ConVars
+	/* ConVars */
 	g_hTSpawns = CreateConVar("sm_ESP_spawns_t", "32", "Amount of spawn points to enforce on the T team.");
 	g_hCTSpawns = CreateConVar("sm_ESP_spawns_ct", "32", "Amount of spawn points to enforce on the CT team.");
 	g_hTeams = CreateConVar("sm_ESP_teams", "1", "0 = Disabled, 1 = All Teams, 2 = Terrorist only, 3 = Counter-Terrorist only.");
@@ -46,10 +44,10 @@ public void OnPluginStart()
 	g_hAuto = CreateConVar("sm_ESP_auto", "0", "1 = Add the spawn points as soon as a ConVar is changed.");
 	g_hMapStartDelay = CreateConVar("sm_ESP_mapstart_delay", "1.0", "The delay of the timer on map start to add in spawn points.");
 	
-	// AlliedMods Release
+	/* AlliedMods Release ConVar (required). */
 	CreateConVar("sm_ESP_version", PL_VERSION, "Extra Spawn Points version.");
 	
-	// Hook ConVar Changes
+	/* Hook ConVar Changed. */
 	HookConVarChange(g_hTSpawns, CVarChanged);
 	HookConVarChange(g_hCTSpawns, CVarChanged);
 	HookConVarChange(g_hTeams, CVarChanged);
@@ -58,15 +56,15 @@ public void OnPluginStart()
 	HookConVarChange(g_hAuto, CVarChanged);
 	HookConVarChange(g_hMapStartDelay, CVarChanged);
 	
-	// Get ConVar Values.
+	/* Get ConVar Values. */
 	GetValues();
 	g_bMapStart = false;
 	
-	// Commands
+	/* Commands. */
 	RegAdminCmd("sm_addspawns", Command_AddSpawns, ADMFLAG_ROOT);
 	RegAdminCmd("sm_getspawncount", Command_GetSpawnCount, ADMFLAG_SLAY);
 	
-	// Automatically Execute Config
+	/* Automatically Execute Config. */
 	AutoExecConfig(true, "plugin.ESP");
 }
 
@@ -148,29 +146,23 @@ stock void AddMapSpawns()
 	float fVecT[3];
 	float angVec[3];
 	
-	char sClassName[MAX_NAME_LENGTH];
+	int iSpawnEnt = -1;
 	
-	for (int i = MaxClients; i <= MAXENTITIES; i++)
+	/* Receive all the T Spawns. */
+	while ((iSpawnEnt = FindEntityByClassname(iSpawnEnt, "info_player_terrorist")) != -1)
 	{
-		if (!IsValidEdict(i) || !IsValidEntity(i))
-		{
-			continue;
-		}
-		
-		GetEdictClassname(i, sClassName, sizeof(sClassName));
-		
-		if (StrEqual(sClassName, "info_player_terrorist"))
-		{
-			iTSpawns++;
-			GetEntPropVector(i, Prop_Data, "m_vecOrigin", fVecT);
-		}
-		else if (StrEqual(sClassName, "info_player_counterterrorist"))
-		{
-			iCTSpawns++;
-			GetEntPropVector(i, Prop_Data, "m_vecOrigin", fVecCt);
-		}
+		iTSpawns++;
+		GetEntPropVector(iSpawnEnt, Prop_Data, "m_vecOrigin", fVecT);
+	}	
+	
+	/* Receive all the CT Spawns. */
+	while ((iSpawnEnt = FindEntityByClassname(iSpawnEnt, "info_player_counterterrorist")) != -1)
+	{
+		iCTSpawns++;
+		GetEntPropVector(iSpawnEnt, Prop_Data, "m_vecOrigin", fVecCt);
 	}
 	
+	/* Double the spawn count if Course Mode is enabled along with the amount of spawn points being above 0. */
 	if (g_bcvarCourse) 
 	{
 		if (iCTSpawns == 0 && iTSpawns > 0) 
@@ -184,11 +176,13 @@ stock void AddMapSpawns()
 		}
 	}
 	
+	/* Debugging message. */
 	if (g_bcvarDebug) 
 	{
 		LogMessage("[ESP]There are %d/%d CT points and %d/%d T points", iCTSpawns, iToSpawnCT, iTSpawns, iToSpawnT);
 	}
 	
+	/* Add the CT spawn points. */
 	if(iCTSpawns && iCTSpawns < iToSpawnCT && iCTSpawns > 0)
 	{
 		if (g_icvarTeams == 1 || g_icvarTeams == 3) 
@@ -210,6 +204,7 @@ stock void AddMapSpawns()
 		}
 	}
 	
+	/* Add the T spawn points. */
 	if(iTSpawns && iTSpawns < iToSpawnT && iTSpawns > 0)
 	{
 		if (g_icvarTeams == 1 || g_icvarTeams == 2) 
@@ -231,6 +226,7 @@ stock void AddMapSpawns()
 		}
 	}
 	
+	/* Finally, enter one last debug message. */
 	if (g_bcvarDebug) 
 	{
 		int idTSpawns = getTeamCount(2);
@@ -240,25 +236,25 @@ stock void AddMapSpawns()
 	}
 }
 
+/* Gets the spawn count for a specific team (e.g. CT and T). */
 stock int getTeamCount(int iTeam)
 {
 	int iAmount = 0;
+	int iEnt;
 	
-	for (int i = MaxClients; i <= MAXENTITIES; i++)
+	/* Receive all the T Spawns. */
+	if (iTeam == 2)
 	{
-		if (!IsValidEdict(i) || !IsValidEntity(i))
-		{
-			continue;
-		}
-		
-		char sClassName[MAX_NAME_LENGTH];
-		GetEdictClassname(i, sClassName, sizeof(sClassName));
-		
-		if (StrEqual(sClassName, "info_player_counterterrorist") && iTeam == 3)
+		while ((iEnt = FindEntityByClassname(iEnt, "info_player_terrorist")) != -1)
 		{
 			iAmount++;
 		}
-		else if (StrEqual(sClassName, "info_player_terrorist") && iTeam == 2)
+	}
+	
+	/* Receive all the CT Spawns. */
+	if (iTeam == 3)
+	{
+		while ((iEnt = FindEntityByClassname(iEnt, "info_player_counterterrorist")) != -1)
 		{
 			iAmount++;
 		}
