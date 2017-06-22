@@ -1,7 +1,7 @@
 #include <sourcemod>
 #include <sdktools>
 
-#define PL_VERSION "1.1"
+#define PL_VERSION "1.2"
 
 public Plugin myinfo =
 {
@@ -13,22 +13,13 @@ public Plugin myinfo =
 };
 
 /* ConVars */
-ConVar g_hTSpawns = null;
-ConVar g_hCTSpawns = null;
-ConVar g_hTeams = null;
-ConVar g_hCourse = null;
-ConVar g_hDebug = null;
-ConVar g_hAuto = null;
-ConVar g_hMapStartDelay = null;
-
-/* ConVar Values */
-int g_icvarTSpawns;
-int g_icvarCTSpawns;
-int g_icvarTeams;
-bool g_bcvarCourse;
-bool g_bcvarDebug;
-bool g_bcvarAuto;
-float g_fcvarMapStartDelay;
+ConVar g_cvTSpawns = null;
+ConVar g_cvCTSpawns = null;
+ConVar g_cvTeams = null;
+ConVar g_cvCourse = null;
+ConVar g_cvDebug = null;
+ConVar g_cvAuto = null;
+ConVar g_cvMapStartDelay = null;
 
 /* Other */
 bool g_bMapStart;
@@ -36,25 +27,16 @@ bool g_bMapStart;
 public void OnPluginStart()
 {
 	/* ConVars */
-	g_hTSpawns = CreateConVar("sm_ESP_spawns_t", "32", "Amount of spawn points to enforce on the T team.");
-	g_hCTSpawns = CreateConVar("sm_ESP_spawns_ct", "32", "Amount of spawn points to enforce on the CT team.");
-	g_hTeams = CreateConVar("sm_ESP_teams", "1", "0 = Disabled, 1 = All Teams, 2 = Terrorist only, 3 = Counter-Terrorist only.");
-	g_hCourse = CreateConVar("sm_ESP_course", "1", "1 = When T or CT spawns are at 0, the opposite team will get double the spawn points.");
-	g_hDebug = CreateConVar("sm_ESP_debug", "0", "1 = Enable debugging.");
-	g_hAuto = CreateConVar("sm_ESP_auto", "0", "1 = Add the spawn points as soon as a ConVar is changed.");
-	g_hMapStartDelay = CreateConVar("sm_ESP_mapstart_delay", "1.0", "The delay of the timer on map start to add in spawn points.");
+	g_cvTSpawns = CreateConVar("sm_ESP_spawns_t", "32", "Amount of spawn points to enforce on the T team.");
+	g_cvCTSpawns = CreateConVar("sm_ESP_spawns_ct", "32", "Amount of spawn points to enforce on the CT team.");
+	g_cvTeams = CreateConVar("sm_ESP_teams", "1", "0 = Disabled, 1 = All Teams, 2 = Terrorist only, 3 = Counter-Terrorist only.");
+	g_cvCourse = CreateConVar("sm_ESP_course", "1", "1 = When T or CT spawns are at 0, the opposite team will get double the spawn points.");
+	g_cvDebug = CreateConVar("sm_ESP_debug", "0", "1 = Enable debugging.");
+	g_cvAuto = CreateConVar("sm_ESP_auto", "0", "1 = Add the spawn points as soon as a ConVar is changed.");
+	g_cvMapStartDelay = CreateConVar("sm_ESP_mapstart_delay", "1.0", "The delay of the timer on map start to add in spawn points.");
 	
 	/* AlliedMods Release ConVar (required). */
 	CreateConVar("sm_ESP_version", PL_VERSION, "Extra Spawn Points version.");
-	
-	/* Hook ConVar Changed. */
-	HookConVarChange(g_hTSpawns, CVarChanged);
-	HookConVarChange(g_hCTSpawns, CVarChanged);
-	HookConVarChange(g_hTeams, CVarChanged);
-	HookConVarChange(g_hCourse, CVarChanged);
-	HookConVarChange(g_hDebug, CVarChanged);
-	HookConVarChange(g_hAuto, CVarChanged);
-	HookConVarChange(g_hMapStartDelay, CVarChanged);
 	
 	/* Get ConVar Values. */
 	GetValues();
@@ -94,25 +76,18 @@ public Action Command_GetSpawnCount(int iClient, int iArgs)
 	return Plugin_Handled;
 }
 
-public void CVarChanged(Handle hCVar, const char[] sOldV, const char[] sNewV)
-{
-	OnConfigsExecuted();
-}
-
 public void OnConfigsExecuted() 
-{
-	GetValues();
-	
+{	
 	if (!g_bMapStart) 
 	{
-		if (g_fcvarMapStartDelay > 0.0) 
+		if (g_cvMapStartDelay.FloatValue > 0.0) 
 		{
-			CreateTimer(g_fcvarMapStartDelay, timer_DelayAddSpawnPoints);
+			CreateTimer(g_cvMapStartDelay.FloatValue, timer_DelayAddSpawnPoints);
 		}
 		g_bMapStart = true;
 	}
 	
-	if (g_bcvarAuto && g_bMapStart) 
+	if (g_cvAuto.BoolValue && g_bMapStart) 
 	{
 		AddMapSpawns();
 	}
@@ -123,24 +98,13 @@ public Action timer_DelayAddSpawnPoints(Handle hTimer)
 	AddMapSpawns();
 }
 
-stock void GetValues() 
-{
-	g_icvarTSpawns = GetConVarInt(g_hTSpawns);
-	g_icvarCTSpawns = GetConVarInt(g_hCTSpawns);
-	g_icvarTeams = GetConVarInt(g_hTeams);
-	g_bcvarCourse = GetConVarBool(g_hCourse);
-	g_bcvarDebug = GetConVarBool(g_hDebug);
-	g_bcvarAuto = GetConVarBool(g_hAuto);
-	g_fcvarMapStartDelay = GetConVarFloat(g_hMapStartDelay);
-}
-
 stock void AddMapSpawns() 
 {
 	int iTSpawns = 0;
 	int iCTSpawns = 0;
 	
-	int iToSpawnT = g_icvarTSpawns;
-	int iToSpawnCT = g_icvarCTSpawns;
+	int iToSpawnT = g_cvTSpawns.IntValue;
+	int iToSpawnCT = g_cvCTSpawns.IntValue;
 	
 	float fVecCt[3];
 	float fVecT[3];
@@ -163,7 +127,7 @@ stock void AddMapSpawns()
 	}
 	
 	/* Double the spawn count if Course Mode is enabled along with the amount of spawn points being above 0. */
-	if (g_bcvarCourse) 
+	if (g_cvCourse.BoolValue) 
 	{
 		if (iCTSpawns == 0 && iTSpawns > 0) 
 		{
@@ -177,7 +141,7 @@ stock void AddMapSpawns()
 	}
 	
 	/* Debugging message. */
-	if (g_bcvarDebug) 
+	if (g_cvDebug.BoolValue) 
 	{
 		LogMessage("[ESP]There are %d/%d CT points and %d/%d T points", iCTSpawns, iToSpawnCT, iTSpawns, iToSpawnT);
 	}
@@ -185,7 +149,7 @@ stock void AddMapSpawns()
 	/* Add the CT spawn points. */
 	if(iCTSpawns && iCTSpawns < iToSpawnCT && iCTSpawns > 0)
 	{
-		if (g_icvarTeams == 1 || g_icvarTeams == 3) 
+		if (g_cvTeams.IntValue == 1 || g_cvTeams.IntValue == 3) 
 		{
 			for(int i = iCTSpawns; i < iToSpawnCT; i++)
 			{
@@ -195,7 +159,7 @@ stock void AddMapSpawns()
 				{
 					TeleportEntity(iEnt, fVecCt, angVec, NULL_VECTOR);
 					
-					if (g_bcvarDebug) 
+					if (g_cvDebug.BoolValue) 
 					{
 						LogMessage("[ESP]+1 CT spawn added!");
 					}
@@ -207,7 +171,7 @@ stock void AddMapSpawns()
 	/* Add the T spawn points. */
 	if(iTSpawns && iTSpawns < iToSpawnT && iTSpawns > 0)
 	{
-		if (g_icvarTeams == 1 || g_icvarTeams == 2) 
+		if (g_cvTeams.IntValue == 1 || g_cvTeams.IntValue == 2) 
 		{
 			for(int i = iTSpawns; i < iToSpawnT; i++)
 			{
@@ -217,7 +181,7 @@ stock void AddMapSpawns()
 				{
 					TeleportEntity(iEnt, fVecT, angVec, NULL_VECTOR);
 					
-					if (g_bcvarDebug) 
+					if (g_cvDebug.BoolValue) 
 					{
 						LogMessage("[ESP]+1 T spawn added!");
 					}
@@ -227,7 +191,7 @@ stock void AddMapSpawns()
 	}
 	
 	/* Finally, enter one last debug message. */
-	if (g_bcvarDebug) 
+	if (g_cvDebug.BoolValue) 
 	{
 		int idTSpawns = getTeamCount(2);
 		int idCTSpawns = getTeamCount(3);
