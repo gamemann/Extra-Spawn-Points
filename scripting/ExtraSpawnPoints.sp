@@ -13,13 +13,13 @@ public Plugin myinfo =
 };
 
 /* ConVars */
-Handle g_hTSpawns = INVALID_HANDLE;
-Handle g_hCTSpawns = INVALID_HANDLE;
-Handle g_hTeams = INVALID_HANDLE;
-Handle g_hCourse = INVALID_HANDLE;
-Handle g_hDebug = INVALID_HANDLE;
-Handle g_hAuto = INVALID_HANDLE;
-Handle g_hMapStartDelay = INVALID_HANDLE;
+ConVar g_hTSpawns = null;
+ConVar g_hCTSpawns = null;
+ConVar g_hTeams = null;
+ConVar g_hCourse = null;
+ConVar g_hDebug = null;
+ConVar g_hAuto = null;
+ConVar g_hMapStartDelay = null;
 
 /* ConVar Values */
 int g_icvarTSpawns;
