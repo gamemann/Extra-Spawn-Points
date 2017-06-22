@@ -38,8 +38,7 @@ public void OnPluginStart()
 	/* AlliedMods Release ConVar (required). */
 	CreateConVar("sm_ESP_version", PL_VERSION, "Extra Spawn Points version.");
 	
-	/* Get ConVar Values. */
-	GetValues();
+	/* Set Map Start bool. */
 	g_bMapStart = false;
 	
 	/* Commands. */
