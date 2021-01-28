@@ -38,15 +38,18 @@ public void OnPluginStart()
 	/* AlliedMods Release ConVar (required). */
 	CreateConVar("sm_ESP_version", PL_VERSION, "Extra Spawn Points version.");
 	
-	/* Set Map Start bool. */
-	g_bMapStart = false;
-	
 	/* Commands. */
 	RegAdminCmd("sm_addspawns", Command_AddSpawns, ADMFLAG_ROOT);
 	RegAdminCmd("sm_getspawncount", Command_GetSpawnCount, ADMFLAG_SLAY);
 	
 	/* Automatically Execute Config. */
 	AutoExecConfig(true, "plugin.ESP");
+}
+
+public void OnMapStart()
+{
+	/* Set Map Start bool. This is executed BEFORE OnConfigsExecuted() via https://sm.alliedmods.net/new-api/sourcemod/OnConfigsExecuted so it should be fine. */
+	g_bMapStart = false;
 }
 
 public Action Command_AddSpawns(int iClient, int iArgs) 
