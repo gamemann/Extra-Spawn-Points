@@ -13,5 +13,8 @@ This would only work on Counter-Strike games.
 * **sm_ESP_auto** - Whether to add spawn points when a ConVar is changed. If 1, will add the spawn points as soon as a ConVar is changed (Default 0).
 * **sm_ESP_mapstart_delay** - The delay of the timer on map start to add in spawn points (Default 1.0).
 
+## Installation
+You'll want to compile the source code (`scripting/ExtraSpawnPoints.sp`). Afterwards, copy/move the compiled `ExtraSpawnPoints.smx` file into the server's `addons/sourcemod/plugins` directory.
+
 ## Credits
 * [Christian Deacon](https://github.com/gamemann)
