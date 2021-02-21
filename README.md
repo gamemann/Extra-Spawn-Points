@@ -13,6 +13,11 @@ Adds extra CT and T spawn points in Counter-Strike: Source and Counter-Strike: G
 * **sm_ESP_auto** - Whether to add spawn points when a ConVar is changed. If 1, will add the spawn points as soon as a ConVar is changed (Default 0).
 * **sm_ESP_mapstart_delay** - The delay of the timer on map start to add in spawn points (Default 1.0).
 
+## Commands
+* **sm_addspawns** - Attempts to add spawn points.
+* **sm_getspawncount** - Receives the current spawn count on each time.
+* **sm_listspawns** - Lists the vector and angle of each spawn point on each team. Please note a client may have issues outputting all of the details into their console. However, using the server console has been very consistent from what I've seen. 
+
 ## Installation
 You'll want to compile the source code (`scripting/ExtraSpawnPoints.sp`). Afterwards, copy/move the compiled `ExtraSpawnPoints.smx` file into the server's `addons/sourcemod/plugins` directory.
 
