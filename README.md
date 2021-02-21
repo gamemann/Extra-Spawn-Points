@@ -15,8 +15,8 @@ Adds extra CT and T spawn points in Counter-Strike: Source and Counter-Strike: G
 
 ## Commands
 * **sm_addspawns** - Attempts to add spawn points.
-* **sm_getspawncount** - Receives the current spawn count on each time.
-* **sm_listspawns** - Lists the vector and angle of each spawn point on each team. Please note a client may have issues outputting all of the details into their console. However, using the server console has been very consistent from what I've seen. 
+* **sm_getspawncount** - Receives the current spawn count on each team.
+* **sm_listspawns** - Lists the vectors and angles of each spawn point on each team. Please note a client may have issues outputting all of the details into their console. However, using the server console has been very consistent from what I've seen. 
 
 ## Installation
 You'll want to compile the source code (`scripting/ExtraSpawnPoints.sp`). Afterwards, copy/move the compiled `ExtraSpawnPoints.smx` file into the server's `addons/sourcemod/plugins` directory.
