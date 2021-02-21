@@ -198,7 +198,7 @@ stock void AddMapSpawns()
 		{
 			int iEnt = CreateEntityByName("info_player_counterterrorist");
 			
-			if (DispatchSpawn(iEnt))
+			if (iEnt != -1 && DispatchSpawn(iEnt))
 			{
 				int iRandSpawn = GetRandomInt(0, (iCTSpawns - 1));
 
@@ -219,7 +219,7 @@ stock void AddMapSpawns()
 		{
 			int iEnt = CreateEntityByName("info_player_terrorist");
 			
-			if (DispatchSpawn(iEnt))
+			if (iEnt != -1 && DispatchSpawn(iEnt))
 			{
 				int iRandSpawn = GetRandomInt(0, (iTSpawns - 1));
 
