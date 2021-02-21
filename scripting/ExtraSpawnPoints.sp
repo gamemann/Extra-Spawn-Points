@@ -1,7 +1,7 @@
 #include <sourcemod>
 #include <sdktools>
 
-#define PL_VERSION "1.2"
+#define PL_VERSION "1.3"
 #define MAXSPAWNS 256
 
 public Plugin myinfo =
