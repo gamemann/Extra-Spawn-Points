@@ -6,11 +6,11 @@
 
 public Plugin myinfo =
 {
-	name        = "Extra Spawn Points (stable)",
-	author      = "Roy (Christian Deacon)",
+	name        = "Extra Spawn Points",
+	author      = "Christian Deacon (gamemann)",
 	description = "Enforces a minimum amount of spawns for each team.",
 	version     = PL_VERSION,
-	url         = "GFLClan.com & AlliedMods.net & TheDevelopingCommunity.com"
+	url         = "GFLClan.com & AlliedMods.net"
 };
 
 /* ConVars */
