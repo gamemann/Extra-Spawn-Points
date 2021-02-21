@@ -2,7 +2,7 @@
 ## Description
 Adds extra CT and T spawn points in Counter-Strike: Source and Counter-Strike: Global Offensive. This is useful for large servers that have to deal with maps with not enough map spawn points.
 
-This would only work on Counter-Strike games.
+**NOTE** - When an additional spawn point is being added, it uses the vector and angle from an already existing spawn point for that team.
 
 ## ConVars
 * **sm_ESP_spawns_t** - Amount of spawn points to enforce on the T team (Default 32).
