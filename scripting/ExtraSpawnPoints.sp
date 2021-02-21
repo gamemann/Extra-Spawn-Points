@@ -41,6 +41,7 @@ public void OnPluginStart()
 	/* Commands. */
 	RegAdminCmd("sm_addspawns", Command_AddSpawns, ADMFLAG_ROOT);
 	RegAdminCmd("sm_getspawncount", Command_GetSpawnCount, ADMFLAG_SLAY);
+	RegAdminCmd("sm_listspawns", Command_ListSpawns, ADMFLAG_SLAY);
 	
 	/* Automatically Execute Config. */
 	AutoExecConfig(true, "plugin.ESP");
@@ -75,6 +76,43 @@ public Action Command_GetSpawnCount(int iClient, int iArgs)
 	
 	ReplyToCommand(iClient, "[ESP]There are now %d CT spawns and %d T spawns", idCTSpawns, idTSpawns);
 	
+	return Plugin_Handled;
+}
+
+public Action Command_ListSpawns(int iClient, int iArgs)
+{
+	float fVec[3];
+	float fAng[3];
+
+	int i = 1;
+	int iEnt = -1;
+
+	PrintToConsole(iClient, "Listing T spawns...");
+
+	while ((iEnt = FindEntityByClassname(iEnt, "info_player_terrorist")) != -1)
+	{
+		GetEntPropVector(iEnt, Prop_Data, "m_vecOrigin", fVec);
+		GetEntPropVector(iEnt, Prop_Data, "m_angRotation", fAng);
+
+		PrintToConsole(iClient, "T Spawn #%d - Vector => %f, %f, %f. Angle => %f, %f, %f.", i, fVec[0], fVec[1], fVec[2], fAng[0], fAng[1], fAng[2]);
+
+		i++;
+	}
+
+	i = 1;
+
+	PrintToConsole(iClient, "Listing CT spawns...");
+
+	while  ((iEnt = FindEntityByClassname(iEnt, "info_player_counterterrorist")) != -1)
+	{
+		GetEntPropVector(iEnt, Prop_Data, "m_vecOrigin", fVec);
+		GetEntPropVector(iEnt, Prop_Data, "m_angRotation", fAng);
+
+		PrintToConsole(iClient, "CT Spawn #%d - Vector => %f, %f, %f. Angle => %f, %f, %f.", i, fVec[0], fVec[1], fVec[2], fAng[0], fAng[1], fAng[2]);
+
+		i++;
+	}
+
 	return Plugin_Handled;
 }
 
