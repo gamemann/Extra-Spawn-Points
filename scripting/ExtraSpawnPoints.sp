@@ -194,48 +194,42 @@ stock void AddMapSpawns()
 	}
 	
 	/* Add the CT spawn points. */
-	if(iCTSpawns && iCTSpawns < iToSpawnCT && iCTSpawns > 0)
+	if (g_cvTeams.IntValue == 1 || g_cvTeams.IntValue == 3) 
 	{
-		if (g_cvTeams.IntValue == 1 || g_cvTeams.IntValue == 3) 
+		for(int i = iCTSpawns; i < iToSpawnCT; i++)
 		{
-			for(int i = iCTSpawns; i < iToSpawnCT; i++)
+			int iEnt = CreateEntityByName("info_player_counterterrorist");
+			
+			if (DispatchSpawn(iEnt))
 			{
-				int iEnt = CreateEntityByName("info_player_counterterrorist");
-				
-				if (DispatchSpawn(iEnt))
-				{
-					int iRandSpawn = GetRandomInt(0, (iCTSpawns - 1));
+				int iRandSpawn = GetRandomInt(0, (iCTSpawns - 1));
 
-					TeleportEntity(iEnt, fVecCT[iRandSpawn], fAngCT[iRandSpawn], NULL_VECTOR);
-					
-					if (g_cvDebug.BoolValue) 
-					{
-						LogMessage("[ESP]+1 CT spawn added!");
-					}
+				TeleportEntity(iEnt, fVecCT[iRandSpawn], fAngCT[iRandSpawn], NULL_VECTOR);
+				
+				if (g_cvDebug.BoolValue) 
+				{
+					LogMessage("[ESP]+1 CT spawn added!");
 				}
 			}
 		}
 	}
 	
 	/* Add the T spawn points. */
-	if(iTSpawns && iTSpawns < iToSpawnT && iTSpawns > 0)
+	if (g_cvTeams.IntValue == 1 || g_cvTeams.IntValue == 2) 
 	{
-		if (g_cvTeams.IntValue == 1 || g_cvTeams.IntValue == 2) 
+		for(int i = iTSpawns; i < iToSpawnT; i++)
 		{
-			for(int i = iTSpawns; i < iToSpawnT; i++)
+			int iEnt = CreateEntityByName("info_player_terrorist");
+			
+			if (DispatchSpawn(iEnt))
 			{
-				int iEnt = CreateEntityByName("info_player_terrorist");
-				
-				if (DispatchSpawn(iEnt))
-				{
-					int iRandSpawn = GetRandomInt(0, (iTSpawns - 1));
+				int iRandSpawn = GetRandomInt(0, (iTSpawns - 1));
 
-					TeleportEntity(iEnt, fVecT[iRandSpawn], fAngT[iRandSpawn], NULL_VECTOR);
-					
-					if (g_cvDebug.BoolValue) 
-					{
-						LogMessage("[ESP]+1 T spawn added!");
-					}
+				TeleportEntity(iEnt, fVecT[iRandSpawn], fAngT[iRandSpawn], NULL_VECTOR);
+				
+				if (g_cvDebug.BoolValue) 
+				{
+					LogMessage("[ESP]+1 T spawn added!");
 				}
 			}
 		}
