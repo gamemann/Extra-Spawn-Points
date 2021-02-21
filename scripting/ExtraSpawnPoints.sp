@@ -2,6 +2,7 @@
 #include <sdktools>
 
 #define PL_VERSION "1.2"
+#define MAXSPAWNS 256
 
 public Plugin myinfo =
 {
@@ -146,24 +147,30 @@ stock void AddMapSpawns()
 	int iToSpawnT = g_cvTSpawns.IntValue;
 	int iToSpawnCT = g_cvCTSpawns.IntValue;
 	
-	float fVecCt[3];
-	float fVecT[3];
-	float angVec[3];
+	float fVecCT[MAXSPAWNS][3];
+	float fVecT[MAXSPAWNS][3];
+
+	float fAngT[MAXSPAWNS][3];
+	float fAngCT[MAXSPAWNS][3];
 	
 	int iSpawnEnt = -1;
 	
 	/* Receive all the T Spawns. */
 	while ((iSpawnEnt = FindEntityByClassname(iSpawnEnt, "info_player_terrorist")) != -1)
 	{
+		GetEntPropVector(iSpawnEnt, Prop_Data, "m_vecOrigin", fVecT[iTSpawns]);
+		GetEntPropVector(iSpawnEnt, Prop_Data, "m_angRotation", fAngT[iTSpawns]);
+
 		iTSpawns++;
-		GetEntPropVector(iSpawnEnt, Prop_Data, "m_vecOrigin", fVecT);
 	}	
 	
 	/* Receive all the CT Spawns. */
 	while ((iSpawnEnt = FindEntityByClassname(iSpawnEnt, "info_player_counterterrorist")) != -1)
 	{
+		GetEntPropVector(iSpawnEnt, Prop_Data, "m_vecOrigin", fVecCT[iCTSpawns]);
+		GetEntPropVector(iSpawnEnt, Prop_Data, "m_angRotation", fAngCT[iCTSpawns]);
+
 		iCTSpawns++;
-		GetEntPropVector(iSpawnEnt, Prop_Data, "m_vecOrigin", fVecCt);
 	}
 	
 	/* Double the spawn count if Course Mode is enabled along with the amount of spawn points being above 0. */
@@ -197,7 +204,9 @@ stock void AddMapSpawns()
 				
 				if (DispatchSpawn(iEnt))
 				{
-					TeleportEntity(iEnt, fVecCt, angVec, NULL_VECTOR);
+					int iRandSpawn = GetRandomInt(0, (iCTSpawns - 1));
+
+					TeleportEntity(iEnt, fVecCT[iRandSpawn], fAngCT[iRandSpawn], NULL_VECTOR);
 					
 					if (g_cvDebug.BoolValue) 
 					{
@@ -219,7 +228,9 @@ stock void AddMapSpawns()
 				
 				if (DispatchSpawn(iEnt))
 				{
-					TeleportEntity(iEnt, fVecT, angVec, NULL_VECTOR);
+					int iRandSpawn = GetRandomInt(0, (iTSpawns - 1));
+
+					TeleportEntity(iEnt, fVecT[iRandSpawn], fAngT[iRandSpawn], NULL_VECTOR);
 					
 					if (g_cvDebug.BoolValue) 
 					{
