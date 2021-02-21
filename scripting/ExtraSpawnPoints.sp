@@ -121,10 +121,8 @@ public void OnConfigsExecuted()
 {	
 	if (!g_bMapStart) 
 	{
-		if (g_cvMapStartDelay.FloatValue > 0.0) 
-		{
-			CreateTimer(g_cvMapStartDelay.FloatValue, timer_DelayAddSpawnPoints);
-		}
+		CreateTimer(g_cvMapStartDelay.FloatValue, timer_DelayAddSpawnPoints);
+
 		g_bMapStart = true;
 	}
 	
