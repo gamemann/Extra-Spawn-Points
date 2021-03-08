@@ -21,6 +21,7 @@ ConVar g_cvCourse = null;
 ConVar g_cvDebug = null;
 ConVar g_cvAuto = null;
 ConVar g_cvMapStartDelay = null;
+ConVar g_cvMoveZAxis = null;
 
 /* Other */
 bool g_bMapStart;
@@ -35,6 +36,7 @@ public void OnPluginStart()
 	g_cvDebug = CreateConVar("sm_ESP_debug", "0", "1 = Enable debugging.");
 	g_cvAuto = CreateConVar("sm_ESP_auto", "0", "1 = Add the spawn points as soon as a ConVar is changed.");
 	g_cvMapStartDelay = CreateConVar("sm_ESP_mapstart_delay", "1.0", "The delay of the timer on map start to add in spawn points.");
+	g_cvMoveZAxis = CreateConVar("sm_ESP_zaxis", "16.0", "Increase Z axis by this amount when spawning a spawn point. This may resolve some issues.");
 	
 	/* AlliedMods Release ConVar (required). */
 	CreateConVar("sm_ESP_version", PL_VERSION, "Extra Spawn Points version.");
@@ -159,6 +161,11 @@ stock void AddMapSpawns()
 		GetEntPropVector(iSpawnEnt, Prop_Data, "m_vecOrigin", fVecT[iTSpawns]);
 		GetEntPropVector(iSpawnEnt, Prop_Data, "m_angRotation", fAngT[iTSpawns]);
 
+		if (g_cvMoveZAxis.FloatValue > 0.0)
+		{
+			fVecT[iTSpawns][2] += g_cvMoveZAxis.FloatValue;
+		}
+
 		iTSpawns++;
 	}	
 	
@@ -167,6 +174,11 @@ stock void AddMapSpawns()
 	{
 		GetEntPropVector(iSpawnEnt, Prop_Data, "m_vecOrigin", fVecCT[iCTSpawns]);
 		GetEntPropVector(iSpawnEnt, Prop_Data, "m_angRotation", fAngCT[iCTSpawns]);
+
+		if (g_cvMoveZAxis.FloatValue > 0.0)
+		{
+			fVecCT[iCTSpawns][2] += g_cvMoveZAxis.FloatValue;
+		}
 
 		iCTSpawns++;
 	}
